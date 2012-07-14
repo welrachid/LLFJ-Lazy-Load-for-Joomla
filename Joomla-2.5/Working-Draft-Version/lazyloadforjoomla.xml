@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" version="2.5" group="system" method="upgrade">
+    <name>PLG_LAZYLOADFORJOOMLA</name>
+    <version>2.5-4</version>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <author>Viktor Vogel</author>
+    <authoremail>admin@kubik-rubik.de</authoremail>
+    <authorurl>http://www.kubik-rubik.de</authorurl>
+    <copyright>Copyright 2012 Viktor Vogel. All rights reserved.</copyright>
+    <creationDate>05-Jun-2012</creationDate>
+	<description>PLG_LAZYLOADFORJOOMLA_XML_DESCRIPTION</description>
+    <files folder="site">
+        <filename plugin="lazyloadforjoomla">lazyloadforjoomla.php</filename>
+        <filename plugin="lazyloadforjoomla">lazyloadforjoomla.js</filename>
+        <filename plugin="lazyloadforjoomla">blank.gif</filename>
+        <filename plugin="lazyloadforjoomla">index.html</filename>
+		<folder plugin="lazyloadforjoomla">fields</folder>
+    </files>
+	<languages folder="site/language">
+        <language tag="de-DE">de-DE/de-DE.plg_system_lazyloadforjoomla.ini</language>
+        <language tag="de-DE">de-DE/de-DE.plg_system_lazyloadforjoomla.sys.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_system_lazyloadforjoomla.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_system_lazyloadforjoomla.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params" addfieldpath="/plugins/system/lazyloadforjoomla/fields">
+            <fieldset name="basic">
+				<field type="krdonationcodecheck" />
+                <field name="exclude_imagenames" type="textarea" default="" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMESDESC" rows="6" cols="60" />
+                <field name="exclude_imagenames_toggle" type="list" default="0" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES_TOGGLE" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES_TOGGLEDESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="exclude_components" type="textarea" default="" label="PLG_LAZYLOADFORJOOMLA_EXCLUDECOMPONENTS" description="PLG_LAZYLOADFORJOOMLA_EXCLUDECOMPONENTSDESC" rows="6" cols="60" />
+                <field name="exclude_components_toggle" type="list" default="0" label="PLG_LAZYLOADFORJOOMLA_EXCLUDECOMPONENTS_TOGGLE" description="PLG_LAZYLOADFORJOOMLA_EXCLUDECOMPONENTS_TOGGLEDESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="exclude_urls" type="textarea" default="" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEURLS" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEURLSDESC" rows="6" cols="60" />
+                <field name="exclude_urls_toggle" type="list" default="0" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEURLS_TOGGLE" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEURLS_TOGGLEDESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="exclude_editor" type="list" default="1" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEJOOMLAEDITOR" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEJOOMLAEDITORDESC">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="exclude_bots" type="list" default="1" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTS" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTSDESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="botslist" type="text" size="100" default="bot,spider,crawler,libwww,search,archive,slurp,teoma,facebook,twitter" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTSLIST" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTSLISTDESC" />
+            </fieldset>
+			<fieldset name="donation">
+				<field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
+			</fieldset>
+        </fields>
+    </config>
+</extension>
