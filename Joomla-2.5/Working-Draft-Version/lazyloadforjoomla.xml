@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" version="2.5" group="system" method="upgrade">
     <name>PLG_LAZYLOADFORJOOMLA</name>
-    <version>2.5-4</version>
+    <version>2.5-5</version>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
     <author>Viktor Vogel</author>
     <authoremail>admin@kubik-rubik.de</authoremail>
     <authorurl>http://www.kubik-rubik.de</authorurl>
     <copyright>Copyright 2012 Viktor Vogel. All rights reserved.</copyright>
-    <creationDate>05-Jun-2012</creationDate>
-	<description>PLG_LAZYLOADFORJOOMLA_XML_DESCRIPTION</description>
-    <files folder="site">
+    <creationDate>24-Sep-2012</creationDate>
+    <description>PLG_LAZYLOADFORJOOMLA_XML_DESCRIPTION</description>
+    <files>
         <filename plugin="lazyloadforjoomla">lazyloadforjoomla.php</filename>
         <filename plugin="lazyloadforjoomla">lazyloadforjoomla.js</filename>
         <filename plugin="lazyloadforjoomla">blank.gif</filename>
         <filename plugin="lazyloadforjoomla">index.html</filename>
-		<folder plugin="lazyloadforjoomla">fields</folder>
+        <folder plugin="lazyloadforjoomla">fields</folder>
     </files>
-	<languages folder="site/language">
+    <languages folder="language">
         <language tag="de-DE">de-DE/de-DE.plg_system_lazyloadforjoomla.ini</language>
         <language tag="de-DE">de-DE/de-DE.plg_system_lazyloadforjoomla.sys.ini</language>
         <language tag="en-GB">en-GB/en-GB.plg_system_lazyloadforjoomla.ini</language>
@@ -25,7 +25,8 @@
     <config>
         <fields name="params" addfieldpath="/plugins/system/lazyloadforjoomla/fields">
             <fieldset name="basic">
-				<field type="krdonationcodecheck" />
+                <field type="krdonationcodecheck" />
+                <field type="krversioncheck" name="krversioncheck" default="llfj|2.5-5" />
                 <field name="exclude_imagenames" type="textarea" default="" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMESDESC" rows="6" cols="60" />
                 <field name="exclude_imagenames_toggle" type="list" default="0" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES_TOGGLE" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEIMAGENAMES_TOGGLEDESC">
                     <option value="0">JNO</option>
@@ -51,9 +52,16 @@
                 </field>
                 <field name="botslist" type="text" size="100" default="bot,spider,crawler,libwww,search,archive,slurp,teoma,facebook,twitter" label="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTSLIST" description="PLG_LAZYLOADFORJOOMLA_EXCLUDEBOTSLISTDESC" />
             </fieldset>
-			<fieldset name="donation">
-				<field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
-			</fieldset>
+            <fieldset name="donation">
+                <field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
+            </fieldset>
+            <fieldset name="versioncheck">
+                <field name="versioncheck_enable" type="list" default="1" label="KR_VERSION_CHECK" description="KR_VERSION_CHECKDESC">
+                    <option value="1">KR_VERSION_CHECK_ONCESESSION</option>
+                    <option value="2">KR_VERSION_CHECK_ONEVERYLOAD</option>
+                    <option value="0">JNO</option>
+                </field>
+            </fieldset>
         </fields>
     </config>
 </extension>
