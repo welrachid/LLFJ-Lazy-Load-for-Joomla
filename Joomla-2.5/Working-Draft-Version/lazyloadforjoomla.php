@@ -1,12 +1,12 @@
 <?php
 /**
- *  @Copyright
- *  @package     LLFJ - Lazy Load for Joomla!
- *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-5 - 24-Sep-2012
- *  @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
+ * @Copyright
+ * @package     LLFJ - Lazy Load for Joomla!
+ * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
+ * @version     2.5-6 - 2013-12-24
+ * @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
  *
- *  @license GNU/GPL
+ * @license     GNU/GPL
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -21,9 +21,8 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.plugin.plugin');
 
-class plgSystemLazyLoadForJoomla extends JPlugin
+class PlgSystemLazyLoadForJoomla extends JPlugin
 {
     protected $_execute;
 
@@ -41,11 +40,14 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         $this->_execute = true;
     }
 
+    /**
+     * Adds needed data to the head section
+     */
     public function onBeforeCompileHead()
     {
         if($this->params->get('exclude_editor'))
         {
-            if(class_exists('JEditor'))
+            if(class_exists('JEditor', false))
             {
                 $this->_execute = false;
             }
@@ -78,11 +80,14 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         }
     }
 
+    /**
+     * Trigger onAfterRender executes the main plugin procedure
+     */
     public function onAfterRender()
     {
         if($this->_execute == true)
         {
-            $blankimage = JURI::base().'plugins/system/lazyloadforjoomla/blank.gif';
+            $blank_image = JURI::base().'plugins/system/lazyloadforjoomla/blank.gif';
             $body = JResponse::getBody();
 
             $pattern = "@<img[^>]*src=[\"\']([^\"\']*)[\"\'][^>]*>@";
@@ -97,7 +102,7 @@ class plgSystemLazyLoadForJoomla extends JPlugin
             {
                 foreach($matches[0] as $match)
                 {
-                    $matchlazy = str_replace('src=', 'src="'.$blankimage.'" data-src=', $match);
+                    $matchlazy = str_replace('src=', 'src="'.$blank_image.'" data-src=', $match);
                     $body = str_replace($match, $matchlazy, $body);
                 }
 
@@ -106,9 +111,12 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         }
     }
 
+    /**
+     * Checks whether the plugin should be executed in the loaded component
+     */
     private function excludeComponents()
     {
-        $option = JRequest::getWord('option');
+        $option = JFactory::getApplication()->input->getWord('option', '');
         $exclude_components = array_map('trim', explode("\n", $this->params->get('exclude_components')));
         $hit = false;
 
@@ -137,6 +145,9 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         }
     }
 
+    /**
+     * Checks whether the plugin should be executed in the loaded URL
+     */
     private function excludeUrls()
     {
         $url = JFactory::getURI()->toString();
@@ -168,6 +179,11 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         }
     }
 
+    /**
+     * Checks whether the loaded images should be handled
+     *
+     * @param array $matches
+     */
     private function excludeImageNames(&$matches)
     {
         $exclude_image_names = array_map('trim', explode("\n", $this->params->get('exclude_imagenames')));
@@ -203,6 +219,9 @@ class plgSystemLazyLoadForJoomla extends JPlugin
         }
     }
 
+    /**
+     * Checks whether the plugin should be executed for bots
+     */
     private function excludeBots()
     {
         $exclude_bots = array_map('trim', explode(",", $this->params->get('botslist')));
@@ -217,5 +236,4 @@ class plgSystemLazyLoadForJoomla extends JPlugin
             }
         }
     }
-
 }

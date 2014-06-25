@@ -3,8 +3,8 @@
  * @Copyright
  * @package     Field - Donation Code Check
  * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- * @version     Joomla! 2.5 - 1.2
- * @date        Created on 22-Aug-2012
+ * @version     Joomla! 2.5-6
+ * @date        Created on 2013-12-15
  * @link        Project Site {@link http://joomla-extensions.kubik-rubik.de}
  *
  * @license GNU/GPL
@@ -34,24 +34,39 @@ class JFormFieldKRDonationCodeCheck extends JFormField
     protected function getInput()
     {
         $field_set = $this->form->getFieldset();
-        $donation_code = $field_set['jform_params_donation_code']->value;
+
+        if(empty($this->group))
+        {
+            $donation_code = $field_set['jform_donation_code']->value;
+        }
+        elseif($this->group == 'params')
+        {
+            $donation_code = $field_set['jform_params_donation_code']->value;
+        }
 
         $session = JFactory::getSession();
         $field_value_session = $session->get('field_value', null, 'krdonationcodecheck');
+        $field_value_head_session = $session->get('field_value_head', null, 'krdonationcodecheck');
         $donation_code_session = $session->get('donation_code', null, 'krdonationcodecheck');
 
-        if(!empty($field_value_session) AND ($donation_code == $donation_code_session))
+        if($field_value_session == 1 AND ($donation_code == $donation_code_session))
         {
+            return;
+        }
+        elseif(!empty($field_value_session) AND !empty($field_value_head_session) AND ($donation_code == $donation_code_session))
+        {
+            $this->addHeadData($field_value_head_session);
             return $field_value_session;
         }
 
         $host = JURI::getInstance()->getHost();
 
         $field_value = '';
+        $donation_code_check = false;
 
         if($host == 'localhost')
         {
-            $field_value = '<div style="border: 1px solid #DD87A2; border-radius: 2px; padding: 5px; background-color: #F9CAD9; font-size: 120%; margin: 10px 0;">'.JTEXT::_('KR_DONATION_CODE_CHECK_DEFAULT_LOCALHOST').'</div>';
+            $field_value = '<div class="'.$this->randomClassName($session).'">'.JTEXT::_('KR_DONATION_CODE_CHECK_DEFAULT_LOCALHOST').'</div>';
 
             if(!empty($donation_code))
             {
@@ -64,7 +79,7 @@ class JFormFieldKRDonationCodeCheck extends JFormField
 
             if($donation_code_check != 1)
             {
-                $field_value = '<div style="border: 1px solid #DD87A2; border-radius: 2px; padding: 5px; background-color: #F9CAD9; font-size: 120%; margin: 10px 0;">'.JTEXT::sprintf('KR_DONATION_CODE_CHECK_DEFAULT', $host).'</div>';
+                $field_value = '<div class="'.$this->randomClassName($session).'">'.JTEXT::sprintf('KR_DONATION_CODE_CHECK_DEFAULT', $host).'</div>';
 
                 if($donation_code_check == -1)
                 {
@@ -78,7 +93,15 @@ class JFormFieldKRDonationCodeCheck extends JFormField
             }
         }
 
-        $session->set('field_value', $field_value, 'krdonationcodecheck');
+        if($donation_code_check == 1)
+        {
+            $session->set('field_value', 1, 'krdonationcodecheck');
+        }
+        else
+        {
+            $session->set('field_value', $field_value, 'krdonationcodecheck');
+        }
+
         $session->set('donation_code', $donation_code, 'krdonationcodecheck');
 
         return $field_value;
@@ -134,6 +157,34 @@ class JFormFieldKRDonationCodeCheck extends JFormField
         }
 
         return $donation_code_check;
+    }
+
+    private function randomClassName($session)
+    {
+        $characters = range('a', 'z');
+        $class_name = $characters[mt_rand(0, count($characters) - 1)];
+        $class_name_length = mt_rand(6, 12);
+        $class_name .= @JUserHelper::genRandomPassword($class_name_length);
+
+        $head_data = '<style type="text/css">div.'.$class_name.'{border: 1px solid #DD87A2; border-radius: 2px; padding: 5px; background-color: #F9CAD9; font-size: 120%; margin: 10px 0;}</style>';
+
+        $this->addHeadData($head_data);
+        $session->set('field_value_head', $head_data, 'krdonationcodecheck');
+
+        return $class_name;
+    }
+
+    private function addHeadData($data)
+    {
+        static $data_loaded = false;
+
+        if(empty($data_loaded))
+        {
+            $document = JFactory::getDocument();
+            $document->addCustomTag($data);
+
+            $data_loaded = true;
+        }
     }
 
 }

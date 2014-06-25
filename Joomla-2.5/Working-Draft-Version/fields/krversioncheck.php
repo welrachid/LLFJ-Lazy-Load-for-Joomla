@@ -3,8 +3,8 @@
  * @Copyright
  * @package     Field - Kubik-Rubik Versioncheck
  * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- * @version     Joomla! 2.5 - 1.1
- * @date        Created on 22-Aug-2012
+ * @version     Joomla! 2.5 - 1.3
+ * @date        Created on 2013-08-30
  * @link        Project Site {@link http://joomla-extensions.kubik-rubik.de}
  *
  * @license GNU/GPL
@@ -35,20 +35,38 @@ class JFormFieldKRVersionCheck extends JFormField
     {
         $field_set = $this->form->getFieldset();
 
-        $version_check_enabled = $field_set['jform_params_versioncheck_enable']->value;
+        if(empty($this->group))
+        {
+            $version_check_enabled = $field_set['jform_versioncheck_enable']->value;
+        }
+        elseif($this->group == 'params')
+        {
+            $version_check_enabled = $field_set['jform_params_versioncheck_enable']->value;
+        }
 
         if(!empty($version_check_enabled))
         {
-            $info = explode('|', $field_set['jform_params_krversioncheck']->value);
+            if(empty($this->group))
+            {
+                $version_check_data = $field_set['jform_krversioncheck']->value;
+            }
+            elseif($this->group == 'params')
+            {
+                $version_check_data = $field_set['jform_params_krversioncheck']->value;
+            }
+
+            $info = explode('|', $version_check_data);
+            $extension = $info[0];
             $version_installed = $info[1];
 
             if($version_check_enabled == 1)
             {
                 $session = JFactory::getSession();
                 $field_value_session = $session->get('field_value', null, 'krversioncheck');
+                $extension_session = $session->get('extension', null, 'krversioncheck');
                 $version_installed_session = $session->get('version_installed', null, 'krversioncheck');
 
-                if(!empty($field_value_session) AND ($version_installed == $version_installed_session))
+                if(!empty($field_value_session) AND ($version_installed == $version_installed_session) AND ($extension == $extension_session))
                 {
                     return $field_value_session;
                 }
@@ -83,6 +101,7 @@ class JFormFieldKRVersionCheck extends JFormField
             {
                 $session->set('field_value', $field_value, 'krversioncheck');
                 $session->set('version_installed', $version_installed, 'krversioncheck');
+                $session->set('extension', $extension, 'krversioncheck');
             }
 
             return $field_value;

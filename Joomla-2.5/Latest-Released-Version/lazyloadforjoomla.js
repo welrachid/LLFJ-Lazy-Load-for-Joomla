@@ -1,9 +1,9 @@
 /*
  *  @Copyright
- *  @package     LLFJ - Lazy Load for Joomla!
- *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-5 - 24-Sep-2012
- *  @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
+ * @package     LLFJ - Lazy Load for Joomla!
+ * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
+ * @version     2.5-6 - 2013-12-24
+ * @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
  *
  * Script: LazyLoad
  * Script by: David Walsh (http://davidwalsh.name)
@@ -28,7 +28,7 @@
 
 var LazyLoad = new Class({
 
-    Implements: [Options,Events],
+    Implements: [Options, Events],
 
     /* additional options */
     options: {
@@ -41,7 +41,7 @@ var LazyLoad = new Class({
     },
 
     /* initialize */
-    initialize: function(options) {
+    initialize: function (options) {
 
         // Set the class options
         this.setOptions(options);
@@ -49,7 +49,7 @@ var LazyLoad = new Class({
         // Select only image tags with the realSrcAttribute - data-src
         var realSrcAttribute = this.options.realSrcAttribute;
 
-        Slick.definePseudo('has-real-src-attr', function(){
+        Slick.definePseudo('has-real-src-attr', function () {
             return this.outerHTML.match(realSrcAttribute);
         });
 
@@ -61,39 +61,39 @@ var LazyLoad = new Class({
         this.largestPosition = 0;
 
         // Figure out which axis to check out
-        var axis = (this.options.mode == "vertical" ? "y": "x");
+        var axis = (this.options.mode == "vertical" ? "y" : "x");
 
         // Calculate the offset
         var offset = (this.container != window && this.container != document.body ? this.container : "");
 
         // Find elements remember and hold on to
-        this.elements = this.elements.filter(function(el) {
+        this.elements = this.elements.filter(function (el) {
             // Make opacity 0 if fadeIn should be done
-            if(this.options.useFade) el.setStyle("opacity",0);
+            if (this.options.useFade) el.setStyle("opacity", 0);
             // Get the image position
             var elPos = el.getPosition(offset)[axis];
             // If the element position is within range, load it
-            if(elPos < this.container.getSize()[axis] + this.options.range) {
+            if (elPos < this.container.getSize()[axis] + this.options.range) {
                 this.loadImage(el);
                 return false;
             }
             return true;
-        },this);
+        }, this);
 
         // Create the action function that will run on each scroll until all images are loaded
-        var action = function(e) {
+        var action = function (e) {
 
             // Get the current position
             var cpos = this.container.getScroll()[axis];
 
             // If the current position is higher than the last highest
-            if(cpos > this.largestPosition) {
+            if (cpos > this.largestPosition) {
 
                 // Filter elements again
-                this.elements = this.elements.filter(function(el) {
+                this.elements = this.elements.filter(function (el) {
 
                     // If the element is within range...
-                    if((cpos + this.options.range + this.container.getSize()[axis]) >= el.getPosition(offset)[axis]) {
+                    if ((cpos + this.options.range + this.container.getSize()[axis]) >= el.getPosition(offset)[axis]) {
 
                         // Load the image!
                         this.loadImage(el);
@@ -101,7 +101,7 @@ var LazyLoad = new Class({
                     }
                     return true;
 
-                },this);
+                }, this);
 
                 // Update the "highest" position
                 this.largestPosition = cpos;
@@ -111,26 +111,26 @@ var LazyLoad = new Class({
             this.fireEvent("scroll");
 
             // If there are no elements left, remove the action event and fire complete
-            if(!this.elements.length) {
-                this.container.removeEvent("scroll",action);
+            if (!this.elements.length) {
+                this.container.removeEvent("scroll", action);
                 this.fireEvent("complete");
             }
 
         }.bind(this);
 
         // Add scroll listener
-        this.container.addEvent("scroll",action);
+        this.container.addEvent("scroll", action);
     },
-    loadImage: function(image) {
+    loadImage: function (image) {
         // Set load event for fadeIn
-        if(this.options.useFade) {
-            image.addEvent("load",function(){
+        if (this.options.useFade) {
+            image.addEvent("load", function () {
                 image.fade(1);
             });
         }
         // Set the SRC
-        image.set("src",image.get(this.options.realSrcAttribute));
+        image.set("src", image.get(this.options.realSrcAttribute));
         // Fire the image load event
-        this.fireEvent("load",[image]);
+        this.fireEvent("load", [image]);
     }
 });
