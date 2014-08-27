@@ -2,7 +2,7 @@
  *  @Copyright
  *  @package     LLFJ - Lazy Load for Joomla!
  *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     3-3 - 2013-12-27
+ *  @version     3-5 - 2014-07-10
  *  @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
  *
  * Script: LazyLoad

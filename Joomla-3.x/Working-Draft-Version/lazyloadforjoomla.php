@@ -3,7 +3,7 @@
  * @Copyright
  * @package     LLFJ - Lazy Load for Joomla!
  * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- * @version     3-3 - 2013-12-27
+ * @version     3-5 - 2014-07-10
  * @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
  *
  * @license     GNU/GPL
@@ -42,6 +42,7 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
      */
     public function onBeforeCompileHead()
     {
+        // First run all exclusion checks
         if($this->params->get('exclude_editor'))
         {
             if(class_exists('JEditor', false))
@@ -65,6 +66,12 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
             $this->excludeUrls();
         }
 
+        if($this->params->get('viewslist') AND $this->_execute == true)
+        {
+            $this->checkLoadedViews();
+        }
+
+        // If all exclusion checks passed successfully, then load the needed data
         if($this->_execute == true)
         {
             JHtml::_('behavior.framework');
@@ -86,9 +93,17 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
         {
             $blankimage = JURI::base().'plugins/system/lazyloadforjoomla/blank.gif';
             $body = JFactory::getApplication()->getBody(false);
+            $pattern_image = "@<img[^>]*src=[\"\']([^\"\']*)[\"\'][^>]*>@";
 
-            $pattern = "@<img[^>]*src=[\"\']([^\"\']*)[\"\'][^>]*>@";
-            preg_match_all($pattern, $body, $matches);
+            // Remove JavaScript template replacement files first
+            if(strpos($body, '<script type="text/template"') !== false)
+            {
+                preg_match_all($pattern_image, preg_replace('@<script type="text/template".*</script>@isU', '', $body), $matches);
+            }
+            else
+            {
+                preg_match_all($pattern_image, $body, $matches);
+            }
 
             if($this->params->get('exclude_imagenames') AND !empty($matches))
             {
@@ -231,6 +246,19 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
                 $this->_execute = false;
                 break;
             }
+        }
+    }
+
+    /**
+     * Stops the execution if view is loaded which is entered in the settings (e.g. tmpl=component)
+     */
+    private function checkLoadedViews()
+    {
+        $exclude_views = array_map('trim', explode(",", $this->params->get('viewslist')));
+
+        if(in_array(JFactory::getApplication()->input->getWord('tmpl', ''), $exclude_views))
+        {
+            $this->_execute = false;
         }
     }
 
