@@ -3,7 +3,7 @@
  * @Copyright
  * @package     LLFJ - Lazy Load for Joomla!
  * @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- * @version     3-5 - 2014-07-10
+ * @version     3-7 - 2014-10-02
  * @link        http://joomla-extensions.kubik-rubik.de/llfj-lazy-load-for-joomla
  *
  * @license     GNU/GPL
@@ -74,10 +74,18 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
         // If all exclusion checks passed successfully, then load the needed data
         if($this->_execute == true)
         {
-            JHtml::_('behavior.framework');
-
-            $head[] = '<script type="text/javascript" src="'.JURI::base().'plugins/system/lazyloadforjoomla/lazyloadforjoomla.js"></script>';
-            $head[] = '<script type="text/javascript">window.addEvent("domready",function() {var lazyloader = new LazyLoad();});</script>';
+            if($this->params->get('framework_type') == 1)
+            {
+                JHtml::_('behavior.framework');
+                $head[] = '<script type="text/javascript" src="'.JURI::base().'plugins/system/lazyloadforjoomla/assets/js/lazyloadforjoomla.js"></script>';
+                $head[] = '<script type="text/javascript">window.addEvent("domready",function() {var lazyloader = new LazyLoad();});</script>';
+            }
+            else
+            {
+                JHtml::_('jquery.framework');
+                $head[] = '<script type="text/javascript" src="'.JURI::base().'plugins/system/lazyloadforjoomla/assets/js/lazyloadforjoomla-jquery.js"></script>';
+                $head[] = '<script type="text/javascript">jQuery(function() {jQuery("img").lazyload();});</script>';
+            }
 
             $head = "\n".implode("\n", $head)."\n";
             JFactory::getDocument()->addCustomTag($head);
@@ -91,7 +99,7 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
     {
         if($this->_execute == true)
         {
-            $blankimage = JURI::base().'plugins/system/lazyloadforjoomla/blank.gif';
+            $blankimage = JURI::base().'plugins/system/lazyloadforjoomla/assets/images/blank.gif';
             $body = JFactory::getApplication()->getBody(false);
             $pattern_image = "@<img[^>]*src=[\"\']([^\"\']*)[\"\'][^>]*>@";
 
@@ -112,10 +120,32 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
 
             if(!empty($matches))
             {
-                foreach($matches[0] as $match)
+                $base = JUri::base();
+                $base_path = JUri::base(true);
+
+                foreach($matches[0] as $key => $match)
                 {
-                    $matchlazy = str_replace('src=', 'src="'.$blankimage.'" data-src=', $match);
-                    $body = str_replace($match, $matchlazy, $body);
+                    // Check for correct image path - important for Joomla! version 3.3.4 and higher - no regular expressions for better performance
+                    if(strpos($matches[1][$key], 'http://') === false AND strpos($matches[1][$key], 'https://') === false)
+                    {
+                        if(!empty($base_path))
+                        {
+                            if(strpos($matches[1][$key], $base_path) === false)
+                            {
+                                $match = str_replace($matches[1][$key], $base_path.'/'.$matches[1][$key], $match);
+                            }
+                        }
+                        else
+                        {
+                            if(strpos($matches[1][$key], $base) === false)
+                            {
+                                $match = str_replace($matches[1][$key], $base.$matches[1][$key], $match);
+                            }
+                        }
+                    }
+
+                    $match_lazy = str_replace('src=', 'src="'.$blankimage.'" data-src=', $match);
+                    $body = str_replace($matches[0][$key], $match_lazy, $body);
                 }
 
                 JFactory::getApplication()->setBody($body);
