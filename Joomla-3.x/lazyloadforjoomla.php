@@ -126,7 +126,7 @@ class PlgSystemLazyLoadForJoomla extends JPlugin
                 foreach($matches[0] as $key => $match)
                 {
                     // Check for correct image path - important for Joomla! version 3.3.4 and higher - no regular expressions for better performance
-                    if(strpos($matches[1][$key], 'http://') === false AND strpos($matches[1][$key], 'https://') === false)
+                    if(strpos($matches[1][$key], 'http://') === false AND strpos($matches[1][$key], 'https://') === false AND substr($matches[1][$key],0,2) !== '//')
                     {
                         if(!empty($base_path))
                         {
